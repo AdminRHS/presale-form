@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Profile - Remote Employees</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom brand colors */
+        .bg-brand-primary { background-color: #1eafff; }
+        .bg-brand-secondary { background-color: #ff8a23; }
+        .text-brand-primary { color: #1eafff; }
+        .text-brand-secondary { color: #ff8a23; }
+        .border-brand-primary { border-color: #1eafff; }
+        .border-brand-secondary { border-color: #ff8a23; }
+        .hover\:bg-brand-primary-dark:hover { background-color: #188ac7; }
+        .hover\:bg-brand-secondary-dark:hover { background-color: #e0741a; }
+        .focus\:ring-brand-primary:focus {
+            --tw-ring-color: #1eafff;
+        }
+        .btn {
+            transition: all 0.3s ease;
+        }
+        .entry-card {
+            transition: all 0.3s ease;
+            border-left-width: 4px;
+        }
+        .entry-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ff8a23;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <img src="https://storage.googleapis.com/gemini-prod-us-west1-4335/v1/files/UklGRrQBAAC-1V9pTVNqCq-3QWMAAABSUNNRQAAAAAArwAAAPQAAABTV0lGRgAAAADAAACAPgCAAEACAABAAgAAgAAAAPgAAABAAgAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAAQAAAAAAAPgAAABAAgAAQAAAAAAADgAAAAAAGgAAAAAAGgAAADgAAAAAAGgAAAAAAAgAAAEACAABAAgAA... " alt="Remote Employees Logo" class="mx-auto h-16 w-auto" onerror="this.onerror=null;this.src='https://placehold.co/200x64/ffffff/1eafff?text=Remote+Employees';">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mt-4">Candidate Profile</h1>
+            <p class="mt-2 text-gray-600">Please fill in your details to create your professional profile.</p>
+        </header>
+
+        <!-- Form -->
+        <form id="candidateForm" class="bg-white p-6 sm:p-8 rounded-lg shadow-md space-y-8">
+
+            <!-- Personal Information -->
+            <div class="form-section">
+                <h2 class="text-2xl font-semibold text-brand-primary border-b-2 border-gray-200 pb-2 mb-6">Personal Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="fullName" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="fullName" name="fullName" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary" required>
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" id="email" name="email" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary" required>
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary">
+                    </div>
+                    <div>
+                        <label for="photo" class="block text-sm font-medium text-gray-700 mb-1">Upload Photo</label>
+                        <input type="file" id="photo" name="photo" accept="image/png, image/jpeg" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-primary file:text-white hover:file:bg-brand-primary-dark cursor-pointer">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="form-section">
+                <div class="flex justify-between items-center border-b-2 border-gray-200 pb-2 mb-6">
+                    <h2 class="text-2xl font-semibold text-brand-primary">🎓 Education</h2>
+                    <button type="button" id="add-education" class="btn bg-brand-primary text-white font-semibold py-2 px-4 rounded-md shadow-sm hover:bg-brand-primary-dark">+ Add</button>
+                </div>
+                <div id="education-entries" class="space-y-6">
+                    <!-- Dynamic education entries will be added here -->
+                </div>
+            </div>
+
+            <!-- Work Experience -->
+            <div class="form-section">
+                <div class="flex justify-between items-center border-b-2 border-gray-200 pb-2 mb-6">
+                    <h2 class="text-2xl font-semibold text-brand-primary">🧑‍💼 Work Experience</h2>
+                    <button type="button" id="add-experience" class="btn bg-brand-primary text-white font-semibold py-2 px-4 rounded-md shadow-sm hover:bg-brand-primary-dark">+ Add</button>
+                </div>
+                <div id="experience-entries" class="space-y-6">
+                    <!-- Dynamic experience entries will be added here -->
+                </div>
+            </div>
+
+            <!-- Submission -->
+            <div>
+                <button type="submit" id="submit-button" class="w-full btn bg-brand-secondary text-white font-bold py-4 px-4 rounded-md shadow-lg hover:bg-brand-secondary-dark text-lg">
+                    Submit Application
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal for loading/success/error messages -->
+    <div id="status-modal" class="modal-overlay hidden">
+        <div class="modal-content shadow-xl">
+            <div id="loader" class="loader mx-auto hidden"></div>
+            <h3 id="modal-title" class="text-2xl font-bold text-gray-800 mt-4"></h3>
+            <p id="modal-message" class="text-gray-600 mt-2"></p>
+            <button id="modal-close-button" class="btn bg-brand-primary text-white font-semibold py-2 px-6 rounded-md mt-6 hover:bg-brand-primary-dark hidden">Close</button>
+        </div>
+    </div>
+
+
+    <script>
+        // --- DOM Elements ---
+        const form = document.getElementById('candidateForm');
+        const addEducationBtn = document.getElementById('add-education');
+        const addExperienceBtn = document.getElementById('add-experience');
+        const educationEntriesContainer = document.getElementById('education-entries');
+        const experienceEntriesContainer = document.getElementById('experience-entries');
+        const submitButton = document.getElementById('submit-button');
+        
+        // Modal elements
+        const statusModal = document.getElementById('status-modal');
+        const loader = document.getElementById('loader');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalCloseButton = document.getElementById('modal-close-button');
+
+        // --- Configuration ---
+        // IMPORTANT: Paste your Google Apps Script Web App URL here
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbx12q_efJVBRxlSg-Yud8pjl7SxHicRYSWW_3LEi_cz9DJ88iveilsKJPSuV74O8cSv0Q/exec';
+
+        // --- Templates for Dynamic Entries ---
+        const createEducationEntry = () => {
+            const id = Date.now();
+            const entry = document.createElement('div');
+            entry.className = 'p-4 bg-white rounded-lg shadow-sm border-l-4 border-brand-primary entry-card';
+            entry.id = `edu-${id}`;
+            entry.innerHTML = `
+                <div class="flex justify-end">
+                    <button type="button" class="remove-btn text-red-500 hover:text-red-700 font-bold" data-id="${id}" data-type="edu">X</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Institution Name</label>
+                        <input type="text" name="institutionName" class="mt-1 w-full p-2 border border-gray-300 rounded-md" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Specialisation</label>
+                        <input type="text" name="specialisation" class="mt-1 w-full p-2 border border-gray-300 rounded-md" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Degree</label>
+                        <select name="degree" class="mt-1 w-full p-2 border border-gray-300 rounded-md" required>
+                            <option value="" disabled selected>Select level...</option>
+                            <option value="Bachelor">Bachelor</option>
+                            <option value="Master">Master</option>
+                            <option value="Courses">Courses</option>
+                            <option value="Student">Student</option>
+                            <option value="Technical and vocational education">Technical/Vocational</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Industries</label>
+                        <input type="text" name="eduIndustries" placeholder="e.g., IT, Design, Marketing" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Start Date</label>
+                        <input type="date" name="eduStartDate" class="mt-1 w-full p-2 border border-gray-300 rounded-md" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">End Date (if applicable)</label>
+                        <input type="date" name="eduEndDate" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-600">Comments</label>
+                        <textarea name="eduComments" rows="3" placeholder="Describe projects, awards, etc." class="mt-1 w-full p-2 border border-gray-300 rounded-md"></textarea>
+                    </div>
+                    <div class="md:col-span-2 flex items-center">
+                        <input type="checkbox" name="isAdditional" class="h-4 w-4 text-brand-primary border-gray-300 rounded focus:ring-brand-primary">
+                        <label class="ml-2 block text-sm text-gray-900">This is additional education (e.g., course, certificate)</label>
+                    </div>
+                </div>
+            `;
+            educationEntriesContainer.appendChild(entry);
+        };
+
+        const createExperienceEntry = () => {
+            const id = Date.now();
+            const entry = document.createElement('div');
+            entry.className = 'p-4 bg-white rounded-lg shadow-sm border-l-4 border-brand-secondary entry-card';
+            entry.id = `exp-${id}`;
+            entry.innerHTML = `
+                <div class="flex justify-end">
+                    <button type="button" class="remove-btn text-red-500 hover:text-red-700 font-bold" data-id="${id}" data-type="exp">X</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Company Name</label>
+                        <input type="text" name="companyName" class="mt-1 w-full p-2 border border-gray-300 rounded-md" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Position</label>
+                        <input type="text" name="position" class="mt-1 w-full p-2 border border-gray-300 rounded-md" required>
+                    </div>
+                     <div>
+                        <label class="block text-sm font-medium text-gray-600">Industries</label>
+                        <input type="text" name="expIndustries" placeholder="e.g., IT, E-commerce" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Responsibilities Tags</label>
+                        <input type="text" name="responsibilitiesTags" placeholder="e.g., React, Team Lead, UX/UI" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Start Date</label>
+                        <input type="date" name="expStartDate" class="mt-1 w-full p-2 border border-gray-300 rounded-md" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">End Date (if applicable)</label>
+                        <input type="date" name="expEndDate" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-600">Responsibilities</label>
+                        <textarea name="responsibilities" rows="4" placeholder="Describe your daily tasks and achievements." class="mt-1 w-full p-2 border border-gray-300 rounded-md"></textarea>
+                    </div>
+                </div>
+            `;
+            experienceEntriesContainer.appendChild(entry);
+        };
+
+        // --- Event Listeners ---
+        addEducationBtn.addEventListener('click', createEducationEntry);
+        addExperienceBtn.addEventListener('click', createExperienceEntry);
+
+        document.addEventListener('click', (e) => {
+            if (e.target && e.target.classList.contains('remove-btn')) {
+                const { id, type } = e.target.dataset;
+                document.getElementById(`${type}-${id}`).remove();
+            }
+        });
+        
+        modalCloseButton.addEventListener('click', () => {
+             statusModal.classList.add('hidden');
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (scriptURL === 'YOUR_WEB_APP_URL') {
+                alert('ERROR: Please replace "YOUR_WEB_APP_URL" in the HTML file with your actual Google Apps Script URL.');
+                return;
+            }
+
+            showModal('loading', 'Submitting...', 'Please wait while we process your application.');
+
+            // 1. Collect Education Data
+            const educationData = Array.from(educationEntriesContainer.querySelectorAll('.entry-card')).map(entry => ({
+                institutionName: entry.querySelector('[name="institutionName"]').value,
+                specialisation: entry.querySelector('[name="specialisation"]').value,
+                degree: entry.querySelector('[name="degree"]').value,
+                startDate: entry.querySelector('[name="eduStartDate"]').value,
+                endDate: entry.querySelector('[name="eduEndDate"]').value,
+                industries: entry.querySelector('[name="eduIndustries"]').value,
+                isAdditional: entry.querySelector('[name="isAdditional"]').checked,
+                comments: entry.querySelector('[name="eduComments"]').value
+            }));
+
+            // 2. Collect Experience Data
+            const experienceData = Array.from(experienceEntriesContainer.querySelectorAll('.entry-card')).map(entry => ({
+                companyName: entry.querySelector('[name="companyName"]').value,
+                position: entry.querySelector('[name="position"]').value,
+                startDate: entry.querySelector('[name="expStartDate"]').value,
+                endDate: entry.querySelector('[name="expEndDate"]').value,
+                industries: entry.querySelector('[name="expIndustries"]').value,
+                responsibilitiesTags: entry.querySelector('[name="responsibilitiesTags"]').value.split(',').map(tag => tag.trim()),
+                responsibilities: entry.querySelector('[name="responsibilities"]').value
+            }));
+            
+            // 3. Handle Photo Upload (convert to base64)
+            const photoFile = document.getElementById('photo').files[0];
+            let photoBase64 = null;
+            if (photoFile) {
+                photoBase64 = await toBase64(photoFile);
+            }
+
+            // 4. Consolidate All Data
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                photo: photoBase64,
+                education: educationData,
+                workExperience: experienceData
+            };
+            
+            // 5. Submit Data
+            try {
+                const response = await fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Important for Google Apps Script web apps
+                    cache: 'no-cache',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                showModal('success', 'Success!', 'Your application has been submitted. Thank you!');
+                form.reset();
+                educationEntriesContainer.innerHTML = '';
+                experienceEntriesContainer.innerHTML = '';
+            } catch (error) {
+                console.error('Error!', error.message);
+                showModal('error', 'Submission Failed', 'An error occurred. Please try again or contact support.');
+            }
+        });
+        
+        // --- Helper Functions ---
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+        
+        const showModal = (type, title, message) => {
+            statusModal.classList.remove('hidden');
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            
+            if (type === 'loading') {
+                loader.classList.remove('hidden');
+                modalCloseButton.classList.add('hidden');
+            } else {
+                loader.classList.add('hidden');
+                modalCloseButton.classList.remove('hidden');
+            }
+            
+            if (type === 'success') {
+                modalTitle.className = 'text-2xl font-bold text-green-600 mt-4';
+            } else if (type === 'error') {
+                modalTitle.className = 'text-2xl font-bold text-red-600 mt-4';
+            } else {
+                modalTitle.className = 'text-2xl font-bold text-gray-800 mt-4';
+            }
+        };
+
+        // --- Initial State ---
+        // Add one of each entry to start with for user convenience
+        createEducationEntry();
+        createExperienceEntry();
+    </script>
+</body>
+</html>
